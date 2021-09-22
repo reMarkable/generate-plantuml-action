@@ -4401,13 +4401,14 @@ const plantumlEncoder = __webpack_require__(524);
 const utils_1 = __webpack_require__(611);
 function generateSvg(code) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Generating svg ...`);
         const encoded = plantumlEncoder.encode(code);
         try {
             const res = yield axios.get(`http://www.plantuml.com/plantuml/svg/${encoded}`);
             return res.data;
         }
         catch (e) {
-            // TODO
+            console.log(`Error generating svg`);
         }
     });
 }

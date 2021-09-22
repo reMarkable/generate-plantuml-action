@@ -9,12 +9,13 @@ const plantumlEncoder = require('plantuml-encoder');
 import { retrieveCodes, getCommitsFromPayload, updatedFiles } from './utils';
 
 async function generateSvg(code) {
+    console.log(`Generating svg ...`);
     const encoded = plantumlEncoder.encode(code);
     try {
         const res = await axios.get(`http://www.plantuml.com/plantuml/svg/${encoded}`);
         return res.data;
     } catch(e) {
-        // TODO
+        console.log(`Error generating svg`);
     }
 }
 
@@ -41,6 +42,8 @@ const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
     console.log(`${files.join("\n")}\nAbove files are updated`);
 
     const plantumlCodes = retrieveCodes(files);
+
+
 
     let tree: any[] = [];
     for (const plantumlCode of plantumlCodes) {
