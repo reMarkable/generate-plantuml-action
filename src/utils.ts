@@ -53,7 +53,11 @@ function puFromMd(markdown) {
         .filter(token => token.type === 'fence')
         .filter(token => infoRegexp.test(token.info));
 
+    
     return fences.reduce((accum, fence) => {
+        console.log(`Fence Info: ${fence.info}`);
+        console.log(`Fence Content: ${fence.content}`);
+        
         const [, umlType, name] = fence.info.match(infoRegexp) || [];
         const [, typeInContent] = fence.content.match(/^(@start\w+)/) || [];
 
