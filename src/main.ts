@@ -13,8 +13,6 @@ async function generateSvg(code) {
     const encoded = plantumlEncoder.encode(code);
     try {
         const res = await axios.get(`http://www.plantuml.com/plantuml/svg/${encoded}`);
-        const str = JSON.stringify(res.data, null, ' ');
-        console.log(`Generated output: ${str}`);
         return res.data;
     } catch(e) {
         console.log(`Error generating svg`);
