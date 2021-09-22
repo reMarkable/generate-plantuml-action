@@ -4405,6 +4405,8 @@ function generateSvg(code) {
         const encoded = plantumlEncoder.encode(code);
         try {
             const res = yield axios.get(`http://www.plantuml.com/plantuml/svg/${encoded}`);
+            const str = JSON.stringify(res.data, null, ' ');
+            console.log(`Generated output: ${str}`);
             return res.data;
         }
         catch (e) {
@@ -4455,6 +4457,9 @@ const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
                     type: "blob",
                     sha: blobRes.data.sha
                 });
+            }
+            else {
+                console.log('No change in svg. Skip');
             }
         }
         if (tree.length === 0) {
