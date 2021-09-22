@@ -4431,7 +4431,6 @@ const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
         const files = utils_1.updatedFiles(commits);
         console.log(`${files.join("\n")}\nAbove files are updated`);
         const plantumlCodes = utils_1.retrieveCodes(files);
-        console.log(`${plantumlCodes.join("\n")}\nAbove codes are retrieved`);
         let tree = [];
         for (const plantumlCode of plantumlCodes) {
             const p = path.format({
@@ -4476,7 +4475,7 @@ const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
             ref: ref.replace(/^refs\//, ''),
             sha: createdCommitRes.data.sha,
         });
-        console.log(`${tree.map(t => t.path).join("\n")}\nAbobe files are generated.`);
+        console.log(`${tree.map(t => t.path).join("\n")}\nAbove files are generated.`);
     });
 })().catch(e => {
     core.setFailed(e);
