@@ -28,17 +28,27 @@ if (!process.env.GITHUB_TOKEN) {
 const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
 
 (async function main() {
+
+   
     const payload = github.context.payload;
     const ref     = payload.ref;
     if (!payload.repository) {
         throw new Error();
     }
+
+    // Ref for PR is undefined?
+    
     const owner   = payload.repository.owner.login;
     const repo    = payload.repository.name;
 
     const commits = await getCommitsFromPayload(octokit, payload);
-    const files = updatedFiles(commits);
+    const files = await updatedFiles(octokit, payload);
+
+    console.log(`${files.join("\n")}\nAbove files are updated`);
+
     const plantumlCodes = retrieveCodes(files);
+
+    console.log(`${plantumlCodes.join("\n")}\nAbove codes are retrieved`);
 
     let tree: any[] = [];
     for (const plantumlCode of plantumlCodes) {
@@ -86,13 +96,17 @@ const octokit = new github.GitHub(process.env.GITHUB_TOKEN);
         tree: treeRes.data.sha,
     });
 
+    console.log(`Sorry, this job is not ready and does not add generated PlantUML file to PR`);
+    /*
+    Reason - ref is mssiing
     const updatedRefRes = await octokit.git.updateRef({
         owner, repo,
         ref: ref.replace(/^refs\//, ''),
         sha: createdCommitRes.data.sha,
     });
-
-    console.log(`${tree.map(t => t.path).join("\n")}\nAbobe files are generated.`);
+    */
+    
+    console.log(`${tree.map(t => t.path).join("\n")}\nAbove files are generated.`);
 })().catch(e => {
     core.setFailed(e);
 });

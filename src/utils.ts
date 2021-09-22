@@ -84,17 +84,34 @@ export async function getCommitsFromPayload(octokit, payload) {
     const owner   = payload.repository.owner.login;
     const repo    = payload.repository.name;
 
+    if (payload.action === "synchronize") {
+        const pull_number = payload.pull_request.number;
+        const res = await octokit.pulls.listCommits({owner, repo, pull_number});
+
+        return res.data;
+    }
+
     const res = await Promise.all(commits.map(commit => octokit.repos.getCommit({
         owner, repo, ref: commit.id
     })));
+
     return res.map(res => (<any>res).data);
 }
 
-export function updatedFiles(commits) {
-    return uniq(commits.reduce(
-        (accum: any[], commit) => accum.concat(
-            commit.files.filter(f => f.status !== 'removed').map(f => f.filename)
-        ),
-        []
-    ));
+
+export async function updatedFiles(octokit, payload) {
+
+    const owner   = payload.repository.owner.login;
+    const repo    = payload.repository.name;
+    
+    if (payload.action === "synchronize") {
+        const pull_number = payload.pull_request.number;
+        const res = await octokit.pulls.listFiles({owner, repo, pull_number});
+        const files = res.data.filter(f => f.status !== 'removed').map(f => f.filename);
+
+        return files;
+    }
+    
+    console.log('This job only applies to synchronize action. Current action is ${payload.action}');
+    return [];
 }
